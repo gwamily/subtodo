@@ -1,16 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const DEV = true;
-
 // https://vite.dev/config/
-export default defineConfig({
-  base: DEV ? undefined : '/subtodo/',
-  plugins: [
-    react({
-      babel: {
-        plugins: [['babel-plugin-react-compiler']],
-      },
-    }),
-  ],
-})
+export default defineConfig(({ mode }) => {
+  return {
+    base: mode === "development" ? undefined : '/subtodo/',
+    plugins: [
+      react({
+        babel: {
+          plugins: [['babel-plugin-react-compiler']],
+        },
+      }),
+    ],
+  }
+}
+)
