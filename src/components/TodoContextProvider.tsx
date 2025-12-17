@@ -1,4 +1,4 @@
-import { defaultTodoContextState, TodoActionsContext, TodoContext, type TodoContextState } from "@/context/todoContext";
+import { defaultTodoContextState, TodoActionsContext, TodoContext, type TodoContextState } from "@/context/todos_store";
 import { makeNewTodoSection } from "@/types/section";
 import { makeNewTodo } from "@/types/todo";
 import { useEffect, useState, type PropsWithChildren } from "react";

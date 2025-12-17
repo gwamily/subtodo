@@ -1,10 +1,10 @@
-import { TodoActionsContext, TodoContext } from "@/context/todoContext"
+import { TodoActionsContext, TodoContext, type TodoContextState } from "@/context/todos_store"
 import type { TodoSection } from "@/types/section";
 import { use } from "react"
 
 export const useTodoContext = () => {
 
-  const context = use(TodoContext);
+  const context = use(TodoContext) as TodoContextState;
 
   if (!context) {
     throw new Error("useTodoContext must be used within a TodoContextProvider and TodoActionsContextProvider");
