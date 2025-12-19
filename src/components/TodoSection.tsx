@@ -19,11 +19,13 @@ export const SectionTodo: React.FC<Props> = ({ section, sectionIndex }) => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState<string>(section.title);
+  const [pendingFocusIndex, setPendingFocusIndex] = useState<number | null>(null);
 
   const actions = useProjectActions();
   const status = getSectionTodoStatus(section);
 
   const addTodo = () => {
+    setPendingFocusIndex(section.todos.length);
     actions.addTodoToSection(sectionIndex, getRandomPlaceholder())
   }
 
@@ -53,7 +55,6 @@ export const SectionTodo: React.FC<Props> = ({ section, sectionIndex }) => {
                 setEditTitle(e.target.value);
               }} onBlur={() => {
                 if (editTitle.trim() === "") {
-                  // actions.remove(sectionIndex, todoIndex);
                 }
                 saveOnBlur(editTitle);
               }}
@@ -87,7 +88,14 @@ export const SectionTodo: React.FC<Props> = ({ section, sectionIndex }) => {
       <CollapsibleContent className='flex flex-col w-full p-3'>
         <div className='flex flex-col gap-2'>
           {section.todos.map((todo, ti) => (
-            <TodoItem key={`todo-${sectionIndex}-${ti}`} sectionIndex={sectionIndex} todo={todo} todoIndex={ti} />
+            <TodoItem
+              key={`todo-${sectionIndex}-${ti}`}
+              sectionIndex={sectionIndex}
+              todo={todo}
+              todoIndex={ti}
+              autoEdit={pendingFocusIndex === ti}
+              onAutoEditConsumed={() => setPendingFocusIndex(null)}
+            />
           ))}
         </div>
         <GWAMIconButton gradient className='mt-2 mx-auto' onClick={addTodo}>

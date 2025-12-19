@@ -3,7 +3,7 @@ import { GWAMCheck, GWAMIconButton } from "./GWAMStyled"
 import { ButtonGroup } from "./ui/button-group"
 import { cn } from "@/lib/utils"
 import { Edit, Trash } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Input } from "./ui/input"
 import { useProjectActions } from "@/hooks/useProject"
 
@@ -11,14 +11,23 @@ interface Props {
   todo: Todo
   sectionIndex: number
   todoIndex: number
+  autoEdit?: boolean
+  onAutoEditConsumed?: () => void
 }
 
-export const TodoItem: React.FC<Props> = ({ todo, sectionIndex, todoIndex }) => {
+export const TodoItem: React.FC<Props> = ({ todo, sectionIndex, todoIndex, autoEdit = false, onAutoEditConsumed }) => {
 
   const actions = useProjectActions();
   const [editTitle, setEditTitle] = useState<string>(todo.title);
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(autoEdit);
+
+  useEffect(() => {
+    if (autoEdit) {
+      setIsEditing(true);
+      onAutoEditConsumed?.();
+    }
+  }, [autoEdit, onAutoEditConsumed]);
 
   const saveOnBlur = (title: string) => {
     actions.changeSectionTodoTitle(sectionIndex, todoIndex, title);
@@ -42,6 +51,11 @@ export const TodoItem: React.FC<Props> = ({ todo, sectionIndex, todoIndex }) => 
             }
             saveOnBlur(editTitle);
           }}
+            onFocus={(e) => {
+              if (autoEdit) {
+                e.target.select();
+              }
+            }}
             onKeyDown={(e) => {
               if (e.key == "Escape" || e.key == "Enter") {
                 const t = e.target as HTMLInputElement
