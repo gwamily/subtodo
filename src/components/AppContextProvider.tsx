@@ -4,6 +4,7 @@ import { makeNewProject, type Project } from '@/types/project';
 import { makeNewTodoSection } from '@/types/section';
 import { makeNewTodo } from '@/types/todo';
 import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 type Props = {} & React.PropsWithChildren;
 
@@ -15,7 +16,7 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
   const createProject: AppDispatch['createProject'] = (name: string) => {
     const newProject = makeNewProject(name);
     if (projects.find(p => p.slug === newProject.slug)) {
-      console.error(`Project with slug ${newProject.slug} already exists`);
+      toast.error("Project with this name already exists");
       return
     }
     setProjects([...projects, newProject]);
@@ -28,7 +29,7 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
   }
 
   const selectProject: AppDispatch['selectProject'] = (id: string | null) => {
-    if (id === null) {
+    if (!id === null || id === '') {
       setCurrentProject(null);
       return
     }
@@ -39,7 +40,6 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
       saveLastSelectedProject(project.id);
     } else {
       setCurrentProject(null);
-      console.error(`Project with id ${id} not found`);
     }
   }
 
@@ -55,7 +55,7 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
     try {
       localStorage.setItem(LOCALSTORAGE_PROJECTS_KEY, JSON.stringify(projects));
     } catch (error) {
-      console.error("Failed to save projects to localStorage", error);
+      toast.error("Failed to save projects");
     }
   }
 
@@ -69,7 +69,7 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
         return [];
       }
     } catch (error) {
-      console.error("Failed to load projects from localStorage", error);
+      toast.error("Failed to load projects");
       return []
     }
   }
@@ -82,7 +82,7 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
       return null
     }
     catch (error) {
-      console.error("Failed to load last selected project from localStorage", error);
+      toast.error("Failed to load last selected project");
     }
     return null;
   }
@@ -101,7 +101,10 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
   }, [projects])
 
   const addSection = (title: string) => {
-    if (!currentProject) return;
+    if (!currentProject) {
+      toast.error("No project selected");
+      return;
+    }
     const newSection = makeNewTodoSection(title);
     setProjects(prev => prev.map(p =>
       p.id === currentProject
@@ -147,7 +150,10 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
   };
 
   const removeSection = (sectionIndex: number) => {
-    if (!currentProject) return;
+    if (!currentProject) {
+      toast.error("No project selected");
+      return;
+    }
 
     setProjects(prev => prev.map(p => {
       if (p.id !== currentProject) return p;
@@ -186,22 +192,20 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
   };
 
   const toggleSectionDone: AppDispatch['toggleSectionDone'] = (sectionIndex: number) => {
-    if (!currentProject) return;
+    if (!currentProject) {
+      toast.error("No project selected");
+      return;
+    }
 
     setProjects(prev => prev.map(project => {
-      // 1. Identify the active project
       if (project.id !== currentProject) return project;
 
-      // 2. Map through sections to find the one to toggle
       const updatedSections = project.sections.map((section, index) => {
         if (index !== sectionIndex) return section;
 
-        // 3. Toggle the status
         return {
           ...section,
           isDone: !section.isDone,
-          // Optional: If you want to mark all todos as done when section is marked done:
-          // todos: section.todos.map(t => ({ ...t, done: !section.isDone }))
         };
       });
 
@@ -213,7 +217,10 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
   };
 
   const changeSectionTitle: AppDispatch['changeSectionTitle'] = (sectionIndex, title) => {
-    if (!currentProject) return;
+    if (!currentProject) {
+      toast.error("No project selected");
+      return;
+    }
 
     setProjects(prev => prev.map(project => {
       if (project.id !== currentProject) return project;
@@ -230,7 +237,10 @@ export const AppContextProvider: React.FC<Props> = ({ children }) => {
   };
 
   const changeSectionTodoTitle: AppDispatch['changeSectionTodoTitle'] = (sectionIndex, todoIndex, title) => {
-    if (!currentProject) return;
+    if (!currentProject) {
+      toast.error("No project selected");
+      return;
+    }
 
     setProjects(prev => prev.map(project => {
       if (project.id !== currentProject) return project;

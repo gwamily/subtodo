@@ -1,14 +1,13 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './components/ui/card';
-import { ScrollArea } from './components/ui/scroll-area';
-import { SectionTodo } from './components/TodoSection';
-import { AddSectionForm } from './components/AddSectionForm';
-// import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from './components/ui/dropdown-menu';
-// import { GWAMIconButton } from './components/GWAMStyled';
-// import { Cog, Trash } from 'lucide-react';
-import { EmptyTodos } from './components/EmptyTodos';
-import { TodoProjectSelector } from './components/TodoProjectSelector';
-import { useProject } from './hooks/useProject';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { SectionTodo } from '@/components/TodoSection';
+import { AddSectionForm } from '@/components/AddSectionForm';
+import { Toaster } from "@/components/ui/sonner"
+import { EmptyTodos } from '@/components/EmptyTodos';
+import { TodoProjectSelector } from '@/components/TodoProjectSelector';
+import { useProject } from '@/hooks/useProject';
 import { useMemo } from 'react';
+import { EmptyProject } from '@/components/EmptyProjects';
 
 function App() {
 
@@ -31,20 +30,6 @@ function App() {
                 </span>
                 <TodoProjectSelector />
               </div>
-              {/* <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <GWAMIconButton className='bg-linear-to-b from-purple-400 to-pink-400'>
-                    <Cog />
-                  </GWAMIconButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem className='hover:cursor-pointer text-xs'>
-                      <Trash color="red" /> Remove all projects
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu> */}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -52,9 +37,7 @@ function App() {
               {state.currentProject && <AddSectionForm />}
               <ScrollArea className='w-full h-100 '>
                 {currentProject == null ? (
-                  <div>
-                    Select project
-                  </div>
+                  <EmptyProject />
                 ) : (
                   currentProject?.sections.length <= 0 ? (
                     <EmptyTodos />
@@ -76,6 +59,7 @@ function App() {
           </CardFooter>
         </Card>
       </div>
+      <Toaster />
     </div>
   )
 }

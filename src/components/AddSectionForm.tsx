@@ -47,7 +47,7 @@ export const AddSectionForm: React.FC = () => {
                 <Field data-invalid={isInvalid}>
                   <ButtonGroup>
                     <Input type='text' autoComplete='off' aria-invalid={isInvalid} placeholder={placeholder()} name={field.name} value={field.state.value} onBlur={field.handleBlur} onChange={e => field.handleChange(e.target.value)} />
-                    <GWAMButton variant={"outline"} aria-label='Add to todo list' type='submit'>
+                    <GWAMButton variant={"outline"} gradient aria-label='Add to todo list' type='submit'>
                       <Plus color="white" />
                     </GWAMButton>
                   </ButtonGroup>

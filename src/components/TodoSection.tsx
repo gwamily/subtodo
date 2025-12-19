@@ -1,11 +1,14 @@
 import type { TodoSection } from "@/types/section"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
-import { Plus, Trash } from "lucide-react";
+import { Edit, Plus, Trash } from "lucide-react";
 import { getSectionTodoStatus } from "@/hooks/useTodoContext";
 import { ButtonGroup } from "./ui/button-group";
-import { GWAMButton, GWAMCheck, GWAMIconButton } from "./GWAMStyled";
+import { GWAMCheck, GWAMIconButton } from "./GWAMStyled";
 import { TodoItem } from "./TodoItem";
 import { useProjectActions } from "@/hooks/useProject";
+import { useState } from "react";
+import { Input } from "./ui/input";
+import { getRandomPlaceholder } from "@/lib/utils";
 
 interface Props {
   section: TodoSection
@@ -14,8 +17,20 @@ interface Props {
 
 export const SectionTodo: React.FC<Props> = ({ section, sectionIndex }) => {
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState<string>(section.title);
+
   const actions = useProjectActions();
   const status = getSectionTodoStatus(section);
+
+  const addTodo = () => {
+    actions.addTodoToSection(sectionIndex, getRandomPlaceholder())
+  }
+
+  const saveOnBlur = (title: string) => {
+    actions.changeSectionTitle(sectionIndex, title);
+    setIsEditing(false);
+  }
 
   return (
     <Collapsible>
@@ -33,30 +48,52 @@ export const SectionTodo: React.FC<Props> = ({ section, sectionIndex }) => {
         )}
         <CollapsibleTrigger className='w-full cursor-pointer'>
           <div className='flex items-center justify-between w-full'>
-            <div className='flex flex-row items-center gap-2'>
-              {section.title}
-              {status && <span>{status.done}/{status.total}</span>}
-            </div>
+            {isEditing ? (
+              <Input autoFocus value={editTitle} onChange={(e) => {
+                setEditTitle(e.target.value);
+              }} onBlur={() => {
+                if (editTitle.trim() === "") {
+                  // actions.remove(sectionIndex, todoIndex);
+                }
+                saveOnBlur(editTitle);
+              }}
+                onKeyDown={(e) => {
+                  if (e.key == "Escape" || e.key == "Enter") {
+                    const t = e.target as HTMLInputElement
+                    t.blur();
+                  }
+                }}
+                className="w-full "
+              />
+            ) : (
+              <span className="flex flex-row items-center gap-2">
+                {section.title}
+                {status && <span>{status.done}/{status.total}</span>}
+              </span>
+            )}
           </div>
         </CollapsibleTrigger>
         <ButtonGroup>
+          <GWAMIconButton className="bg-orange-400 hover:bg-orange-700" onClick={() => setIsEditing(true)}>
+            <Edit />
+          </GWAMIconButton>
           <GWAMIconButton className="w-7 h-7 bg-red-500 hover:bg-red-700" onClick={() => {
             actions.removeSection(sectionIndex)
           }}>
             <Trash />
           </GWAMIconButton>
         </ButtonGroup>
-      </div>
+      </div >
       <CollapsibleContent className='flex flex-col w-full p-3'>
         <div className='flex flex-col gap-2'>
           {section.todos.map((todo, ti) => (
             <TodoItem key={`todo-${sectionIndex}-${ti}`} sectionIndex={sectionIndex} todo={todo} todoIndex={ti} />
           ))}
         </div>
-        <GWAMButton className='hover:from-purple-500 hover:to-pink-500 bg-linear-to-br from-purple-400 to-pink-500 mt-2 mx-auto' onClick={() => actions.addTodoToSection(sectionIndex, "Hello")}>
+        <GWAMIconButton gradient className='mt-2 mx-auto' onClick={addTodo}>
           <Plus />
-        </GWAMButton>
+        </GWAMIconButton>
       </CollapsibleContent>
-    </Collapsible>
+    </Collapsible >
   )
 }

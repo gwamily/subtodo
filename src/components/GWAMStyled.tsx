@@ -5,18 +5,18 @@ import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
 import type { VariantProps } from "class-variance-authority"
 
 type ButtonProps = {
-
+  gradient?: boolean
 } & React.ComponentProps<"button"> & VariantProps<typeof buttonVariants> & {
   asChild?: boolean
 }
 
-export const GWAMButton: React.FC<ButtonProps> = ({ children, className, ...props }) => {
-  return (<Button className={cn("hover:from-purple-500 hover:to-pink-500 bg-linear-to-br from-purple-400 to-pink-500", "hover:cursor-pointer", className)} {...props}>
+export const GWAMButton: React.FC<ButtonProps> = ({ children, className, gradient, ...props }) => {
+  return (<Button className={cn("text-white", "hover:cursor-pointer", { "hover:from-purple-500 hover:to-pink-500 bg-linear-to-br from-purple-400 to-pink-500": gradient }, className)} {...props}>
     {children}
   </Button>)
 }
 export const GWAMIconButton: React.FC<ButtonProps> = ({ children, className, size, ...props }) => {
-  return <GWAMButton size={size} className={cn("w-5 h-5 hover:from-purple-500 hover:to-pink-500 bg-linear-to-br from-purple-400 to-pink-500", className)} {...props}>
+  return <GWAMButton size={size} className={cn("w-7 h-7 ", className)} {...props}>
     {children}
   </GWAMButton>
 }

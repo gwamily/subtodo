@@ -18,6 +18,7 @@ import { GWAMButton, GWAMIconButton } from "./GWAMStyled"
 import { Input } from "./ui/input"
 import { ButtonGroup } from "./ui/button-group"
 import { useProject, useProjectActions } from "@/hooks/useProject"
+import { toast } from "sonner"
 
 export function TodoProjectSelector() {
 
@@ -44,7 +45,6 @@ export function TodoProjectSelector() {
         </PopoverTrigger>
         <PopoverContent className="w-50 p-0">
           <Command>
-            {/* <CommandInput placeholder="Search todos..." className="h-9" /> */}
             <CommandList>
               <CommandEmpty>No projects found</CommandEmpty>
               <CommandGroup>
@@ -87,6 +87,7 @@ export function CreateNewProjectPopover() {
     e.stopPropagation();
 
     if (projectName.trim().length <= 0) {
+      toast.error("Project name cannot be empty");
       return;
     }
 
@@ -98,7 +99,7 @@ export function CreateNewProjectPopover() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <GWAMIconButton>
+        <GWAMIconButton gradient>
           <Plus />
         </GWAMIconButton>
       </PopoverTrigger>
@@ -109,8 +110,8 @@ export function CreateNewProjectPopover() {
             <form onSubmit={submit}>
               <ButtonGroup className="w-full">
                 <Input type="text" placeholder="Project name" value={projectName} onChange={e => setProjectName(e.target.value)} className="" />
-                <GWAMButton type="submit">
-                  <Plus />
+                <GWAMButton gradient type="submit">
+                  <Check />
                 </GWAMButton>
               </ButtonGroup>
             </form>

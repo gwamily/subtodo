@@ -23,7 +23,7 @@ export function EmptyTodos() {
       </EmptyHeader>
       <EmptyContent>
         <div className="flex gap-2">
-          <GWAMButton variant="outline">Import Todos from file (soon)</GWAMButton>
+          <GWAMButton gradient disabled>Import Todos from file (soon)</GWAMButton>
         </div>
       </EmptyContent>
     </Empty>

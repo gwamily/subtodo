@@ -2,7 +2,7 @@ import type { Todo } from "@/types/todo"
 import { GWAMCheck, GWAMIconButton } from "./GWAMStyled"
 import { ButtonGroup } from "./ui/button-group"
 import { cn } from "@/lib/utils"
-import { Trash } from "lucide-react"
+import { Edit, Trash } from "lucide-react"
 import { useState } from "react"
 import { Input } from "./ui/input"
 import { useProjectActions } from "@/hooks/useProject"
@@ -31,10 +31,9 @@ export const TodoItem: React.FC<Props> = ({ todo, sectionIndex, todoIndex }) => 
         checked={todo.done} onCheckedChange={(_e) => {
           actions.toggleSectionTodoDone(sectionIndex, todoIndex)
         }} />
-      <span className={cn({
-      })}>
+      <span className={cn("w-full")}>
         {isEditing ? (
-          <Input value={editTitle} onChange={(e) => {
+          <Input autoFocus value={editTitle} onChange={(e) => {
             setEditTitle(e.target.value);
           }} onBlur={() => {
             if (editTitle.trim() === "") {
@@ -42,18 +41,27 @@ export const TodoItem: React.FC<Props> = ({ todo, sectionIndex, todoIndex }) => 
               return
             }
             saveOnBlur(editTitle);
-          }} />
+          }}
+            onKeyDown={(e) => {
+              if (e.key == "Escape" || e.key == "Enter") {
+                const t = e.target as HTMLInputElement
+                t.blur();
+              }
+            }}
+            className="w-full "
+          />
         ) : (
-          <span onClick={() => {
-            setIsEditing(true)
-          }}>
+          <span>
             {todo.title}
           </span>
 
         )}
       </span>
       <ButtonGroup className='ml-auto hover:cursor-pointer'>
-        <GWAMIconButton className="w-7 h-7 bg-red-500 hover:bg-red-700" onClick={() => actions.removeTodoFromSection(sectionIndex, todoIndex)}>
+        <GWAMIconButton className="bg-orange-400 hover:bg-orange-700" onClick={() => setIsEditing(true)}>
+          <Edit />
+        </GWAMIconButton>
+        <GWAMIconButton className="bg-red-500 hover:bg-red-700" onClick={() => actions.removeTodoFromSection(sectionIndex, todoIndex)}>
           <Trash />
         </GWAMIconButton>
       </ButtonGroup>
